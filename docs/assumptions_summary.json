@@ -1,0 +1,35 @@
+{
+  "generated_at": "2026-02-02T00:54:07.133735Z",
+  "horizon": {
+    "start_month": "2026-01",
+    "end_month": "2028-12"
+  },
+  "scenarios": {
+    "base": {
+      "new_logo_mult": 1.0,
+      "expansion_mult": 1.0,
+      "churn_mult": 1.0,
+      "cost_per_1k_tokens_mult": 1.0
+    },
+    "upside": {
+      "new_logo_mult": 1.2,
+      "expansion_mult": 1.25,
+      "churn_mult": 0.9,
+      "cost_per_1k_tokens_mult": 0.9
+    },
+    "downside": {
+      "new_logo_mult": 0.8,
+      "expansion_mult": 0.85,
+      "churn_mult": 1.15,
+      "cost_per_1k_tokens_mult": 1.1
+    }
+  },
+  "base_inputs": {
+    "new_customers_per_month": 40,
+    "logo_churn_rate_monthly_0_3": 0.04,
+    "logo_churn_rate_monthly_4_plus": 0.02,
+    "seat_expansion_rate_monthly_0_3": 0.01,
+    "seat_expansion_rate_monthly_4_plus": 0.015,
+    "usage_expansion_multiplier": 1.3
+  }
+}
