@@ -1,10 +1,10 @@
 ## Monthly Business Review — 2028-12
 
-**Headline:** MRR ended at **$1,161,590** (MoM change **$8,057**). Gross margin finished at **68.3%** (MoM change **+0.1 pts**).
+**Headline:** MRR ended at **$1,326,569** (MoM change **$10,564**). Gross margin finished at **67.7%** (MoM change **+0.1 pts**).
 
 ### What drove the change?
 - Seat MRR change: **$-297**
-- Usage MRR change: **$8,354**
+- Usage MRR change: **$10,861**
 
 ### Focus areas
 - Improve expansion (NRR) via deeper workflow adoption and credits-driven value.

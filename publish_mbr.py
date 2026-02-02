@@ -17,6 +17,7 @@ from src.bridges import mrr_bridge, gm_bridge
 from src.charts import save_charts
 from src.narrative import build_memo
 from src.qa import qa
+from src.scenario import apply_scenario_to_kpis
 
 
 def run(cmd: list[str], cwd: Path) -> None:
@@ -52,18 +53,22 @@ def main() -> None:
             "seat_expansion_rate_monthly_0_3": cfg.get("seat_expansion_rate_monthly_0_3"),
             "seat_expansion_rate_monthly_4_plus": cfg.get("seat_expansion_rate_monthly_4_plus"),
             "usage_expansion_multiplier": cfg.get("usage_expansion_multiplier"),
+            "notes": "Scenario deltas are applied by scaling month-over-month KPI deltas (growth vs contraction).",
         },
     }
     (docs / "assumptions_summary.json").write_text(json.dumps(assumptions_summary, indent=2), encoding="utf-8")
 
+    # Build base KPI series once from raw inputs
+    base_kpis = build_monthly_kpis(inputs["subs"], inputs["usage"])
+
     for scenario in scenarios:
         sc = cfg["scenarios"][scenario]
 
-        # For v1 we apply scenario multipliers only to costs + narrative; full cohort scenario engine can be v2.
-        # (We already have cohort engine in Clay project; here we focus on MBR automation.)
-        kpis = build_monthly_kpis(inputs["subs"], inputs["usage"])
+        # v2: apply scenario multipliers to trajectories (growth/contraction) + token usage
+        kpis = apply_scenario_to_kpis(base_kpis, sc, cfg)
         kpis["scenario"] = scenario
 
+        # Apply scenario to costs (e.g., cost_per_1k_tokens_mult)
         kpis = add_cogs(kpis, inputs["cogs_ai"], sc | cfg)
         kpis = add_opex_and_runway(kpis, inputs["opex"], inputs["cash"], cfg)
 
