@@ -20,16 +20,25 @@ def build_memo(df: pd.DataFrame, bridge: pd.DataFrame) -> str:
     drivers = "### What drove the change?\n"
     if len(bridge) > 0:
         b = bridge.iloc[-1]
-        drivers += (
-            f"- Seat MRR change: **${b['delta_seat']:,.0f}**\n"
-            f"- Usage MRR change: **${b['delta_usage']:,.0f}**\n"
-        )
+        # Support both old bridge (delta_seat/delta_usage) and new customer bridge
+        if "new_mrr" in b.index:
+            drivers += (
+                f"- New: **+${float(b.get('new_mrr', 0.0)):,.0f}**\n"
+                f"- Expansion: **+${float(b.get('expansion_mrr', 0.0)):,.0f}**\n"
+                f"- Contraction: **-${float(b.get('contraction_mrr', 0.0)):,.0f}**\n"
+                f"- Churn: **-${float(b.get('churn_mrr', 0.0)):,.0f}**\n"
+            )
+        else:
+            drivers += (
+                f"- Seat MRR change: **${float(b.get('delta_seat', 0.0)):,.0f}**\n"
+                f"- Usage MRR change: **${float(b.get('delta_usage', 0.0)):,.0f}**\n"
+            )
 
     ops = (
         "\n### Focus areas\n"
-        "- Improve expansion (NRR) via deeper workflow adoption and credits-driven value.\n"
-        "- Track inference efficiency (cost per 1k tokens) and push model/infra optimizations.\n"
-        "- Maintain sales efficiency: watch payback proxy via margin and growth mix.\n"
+        "- Monitor retention and expansion (NRR) and identify churn/downsells by cohort.\n"
+        "- Track unit economics: $/GB, $/1M edge requests, and $/build minute vs unit costs.\n"
+        "- Watch GM drivers: usage mix shift + infra unit cost trends + fixed cost absorption.\n"
     )
 
     return top_line + drivers + ops

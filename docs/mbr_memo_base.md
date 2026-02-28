@@ -1,12 +1,14 @@
 ## Monthly Business Review — 2028-12
 
-**Headline:** MRR ended at **$1,326,569** (MoM change **$10,564**). Gross margin finished at **67.7%** (MoM change **+0.1 pts**).
+**Headline:** MRR ended at **$62,322** (MoM change **$2,324**). Gross margin finished at **-335.2%** (MoM change **+12.9 pts**).
 
 ### What drove the change?
-- Seat MRR change: **$-297**
-- Usage MRR change: **$10,861**
+- New: **+$1,736**
+- Expansion: **+$15,119**
+- Contraction: **-$13,530**
+- Churn: **-$1,001**
 
 ### Focus areas
-- Improve expansion (NRR) via deeper workflow adoption and credits-driven value.
-- Track inference efficiency (cost per 1k tokens) and push model/infra optimizations.
-- Maintain sales efficiency: watch payback proxy via margin and growth mix.
+- Monitor retention and expansion (NRR) and identify churn/downsells by cohort.
+- Track unit economics: $/GB, $/1M edge requests, and $/build minute vs unit costs.
+- Watch GM drivers: usage mix shift + infra unit cost trends + fixed cost absorption.

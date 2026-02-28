@@ -15,7 +15,7 @@ def load_inputs(root: Path) -> Dict[str, pd.DataFrame]:
     raw = root / "inputs" / "raw"
     subs = load_csv(raw / "subscriptions_monthly.csv")
     usage = load_csv(raw / "usage_monthly.csv")
-    cogs_ai = load_csv(raw / "cogs_ai_monthly.csv")
+    cogs_ai = load_csv(raw / "cogs_ai_monthly.csv")  # now used as infra unit costs
     opex = load_csv(raw / "opex_monthly.csv")
     cash = load_csv(raw / "cash_monthly.csv")
 

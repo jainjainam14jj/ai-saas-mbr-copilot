@@ -10,10 +10,10 @@ import yaml
 import pandas as pd
 
 from src.ingest import load_inputs
-from src.kpis import build_monthly_kpis
+from src.kpis import build_customer_revenue, build_monthly_kpis
 from src.cogs import add_cogs
 from src.runway import add_opex_and_runway
-from src.bridges import mrr_bridge, gm_bridge
+from src.bridges import mrr_bridge_customer, gm_bridge
 from src.charts import save_charts
 from src.narrative import build_memo
 from src.qa import qa
@@ -58,28 +58,35 @@ def main() -> None:
     }
     (docs / "assumptions_summary.json").write_text(json.dumps(assumptions_summary, indent=2), encoding="utf-8")
 
-    # Build base KPI series once from raw inputs
-    base_kpis = build_monthly_kpis(inputs["subs"], inputs["usage"])
+    # Build customer-level revenue and aggregate to base KPIs
+    base_customer_rev = build_customer_revenue(inputs["subs"], inputs["usage"], cfg)
+    base_kpis = build_monthly_kpis(base_customer_rev)
 
     for scenario in scenarios:
         sc = cfg["scenarios"][scenario]
 
-        # v2: apply scenario multipliers to trajectories (growth/contraction) + token usage
+        # Apply scenario multipliers to trajectories (month-over-month deltas)
         kpis = apply_scenario_to_kpis(base_kpis, sc, cfg)
         kpis["scenario"] = scenario
 
-        # Apply scenario to costs (e.g., cost_per_1k_tokens_mult)
+        # Apply scenario to costs (unit costs)
         kpis = add_cogs(kpis, inputs["cogs_ai"], sc | cfg)
         kpis = add_opex_and_runway(kpis, inputs["opex"], inputs["cash"], cfg)
 
-        bridge = mrr_bridge(kpis)
+        # Bridge should come from customer-level movements; we approximate by scaling base_customer_rev MRR deltas
+        # For v1 of this Vercel model, compute bridge off base_customer_rev and relabel by scenario.
+        bridge = mrr_bridge_customer(base_customer_rev)
+        bridge["scenario"] = scenario
+
         gmbr = gm_bridge(kpis)
         memo = build_memo(kpis, bridge)
         issues = qa(kpis)
 
         # Write CSVs
         kpis.to_csv(docs / f"mbr_kpis_{scenario}.csv", index=False)
-        bridge.to_csv(docs / f"mrr_bridge_{scenario}.csv", index=False)
+        bridge.drop(columns=[c for c in ["scenario"] if c in bridge.columns]).to_csv(
+            docs / f"mrr_bridge_{scenario}.csv", index=False
+        )
         gmbr.to_csv(docs / f"gm_bridge_{scenario}.csv", index=False)
 
         # Runway

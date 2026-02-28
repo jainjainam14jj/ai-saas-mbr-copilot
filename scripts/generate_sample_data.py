@@ -15,81 +15,89 @@ def main() -> None:
     raw.mkdir(parents=True, exist_ok=True)
 
     months = month_range("2026-01", "2028-12")
-    rng = np.random.default_rng(7)
+    rng = np.random.default_rng(11)
 
-    # Create synthetic customer base
-    n0 = 300
-    customer_ids = [f"C{str(i).zfill(4)}" for i in range(1, 2000)]
+    # Synthetic customer base
+    n0 = 220
+    customer_ids = [f"ACCT{str(i).zfill(4)}" for i in range(1, 4000)]
     active = set(customer_ids[:n0])
 
-    sub_rows = []
+    subs_rows = []
     usage_rows = []
 
-    price_seat = 99
-    price_1k_tokens = 0.60
+    seat_px = 20.0
 
     for t, m in enumerate(months):
         # new customers
-        new_n = 40
+        new_n = 35
         new = customer_ids[n0 + t * new_n : n0 + (t + 1) * new_n]
         for cid in new:
             active.add(cid)
 
-        # churn some
-        churn_rate = 0.03 if t < 4 else 0.02
+        # churn
+        churn_rate = 0.028 if t < 4 else 0.018
         churn_n = int(len(active) * churn_rate)
         churned = set(rng.choice(list(active), size=max(churn_n, 0), replace=False)) if churn_n else set()
         active -= churned
 
         for cid in list(active):
-            # seats and mrr (small variation)
-            seats = max(1, int(rng.normal(4.0, 1.0)))
-            mrr = seats * price_seat
+            # dev seats (subscription component)
+            dev_seats = max(1, int(rng.normal(3.0, 1.2)))
+            seat_mrr = dev_seats * seat_px
 
-            # token usage (high variance)
-            tokens_in = max(0, int(rng.normal(600_000, 200_000)))
-            tokens_out = max(0, int(rng.normal(500_000, 180_000)))
-            api_calls = max(0, int(rng.normal(120, 50)))
+            # usage units (Vercel-ish)
+            edge_m = max(0.1, rng.lognormal(mean=2.2, sigma=0.6))  # millions
+            data_gb = max(5.0, rng.lognormal(mean=5.7, sigma=0.5))  # GB
+            build_min = max(20.0, rng.lognormal(mean=4.8, sigma=0.6))  # minutes
 
-            sub_rows.append({
-                "month": m.strftime("%Y-%m"),
-                "customer_id": cid,
-                "plan": "pro",
-                "seats": seats,
-                "mrr": mrr,
-            })
+            subs_rows.append(
+                {
+                    "month": m.strftime("%Y-%m"),
+                    "customer_id": cid,
+                    "plan": "pro",
+                    "dev_seats": dev_seats,
+                    "seat_mrr": seat_mrr,
+                }
+            )
 
-            usage_rows.append({
-                "month": m.strftime("%Y-%m"),
-                "customer_id": cid,
-                "tokens_in": tokens_in,
-                "tokens_out": tokens_out,
-                "api_calls": api_calls,
-                "usage_revenue": ((tokens_in + tokens_out) / 1000.0) * price_1k_tokens,
-            })
+            usage_rows.append(
+                {
+                    "month": m.strftime("%Y-%m"),
+                    "customer_id": cid,
+                    "edge_requests_millions": float(edge_m),
+                    "fast_data_transfer_gb": float(data_gb),
+                    "build_minutes": float(build_min),
+                }
+            )
 
-    pd.DataFrame(sub_rows).to_csv(raw / "subscriptions_monthly.csv", index=False)
+    pd.DataFrame(subs_rows).to_csv(raw / "subscriptions_monthly.csv", index=False)
     pd.DataFrame(usage_rows).to_csv(raw / "usage_monthly.csv", index=False)
 
-    # COGS AI
-    cogs_ai = pd.DataFrame({
-        "month": [m.strftime("%Y-%m") for m in months],
-        "cost_per_1k_tokens": np.linspace(0.25, 0.18, len(months)),
-        "infra_fixed_cost": np.linspace(40_000, 70_000, len(months)),
-    })
-    cogs_ai.to_csv(raw / "cogs_ai_monthly.csv", index=False)
+    # Infra unit costs (illustrative)
+    cogs = pd.DataFrame(
+        {
+            "month": [m.strftime("%Y-%m") for m in months],
+            "cost_per_gb": np.linspace(0.020, 0.014, len(months)),
+            "cost_per_1m_edge": np.linspace(0.35, 0.25, len(months)),
+            "cost_per_build_min": np.linspace(0.004, 0.003, len(months)),
+            "infra_fixed_cost": np.linspace(180_000, 260_000, len(months)),
+        }
+    )
+    cogs.to_csv(raw / "cogs_ai_monthly.csv", index=False)
 
     # Opex
-    opex = pd.DataFrame({
-        "month": [m.strftime("%Y-%m") for m in months],
-        "rnd": np.linspace(220_000, 320_000, len(months)),
-        "sales_marketing": np.linspace(260_000, 360_000, len(months)),
-        "g_and_a": np.linspace(110_000, 150_000, len(months)),
-    })
+    opex = pd.DataFrame(
+        {
+            "month": [m.strftime("%Y-%m") for m in months],
+            "rnd": np.linspace(260_000, 420_000, len(months)),
+            "sales_marketing": np.linspace(320_000, 520_000, len(months)),
+            "g_and_a": np.linspace(140_000, 210_000, len(months)),
+        }
+    )
     opex.to_csv(raw / "opex_monthly.csv", index=False)
 
     # Cash
-    pd.DataFrame({"month": [months[0].strftime("%Y-%m")], "starting_cash": [2_500_000]}).to_csv(
+    pd.DataFrame({"month": [months[0].strftime("%Y-%m")], "starting_cash": [3_500_000]}).to_csv(
         raw / "cash_monthly.csv", index=False
     )
 
