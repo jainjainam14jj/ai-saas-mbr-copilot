@@ -1,12 +1,12 @@
 ## Monthly Business Review — 2028-12
 
-**Headline:** MRR ended at **$49,919** (MoM change **$1,778**). Gross margin finished at **-443.0%** (MoM change **+15.1 pts**).
+**Headline:** MRR ended at **$123,449** (MoM change **$-3,496**). Gross margin finished at **7.6%** (MoM change **-3.0 pts**).
 
 ### What drove the change?
-- New: **+$1,736**
-- Expansion: **+$15,119**
-- Contraction: **-$13,530**
-- Churn: **-$1,001**
+- New: **+$4,871**
+- Expansion: **+$61,046**
+- Contraction: **-$65,645**
+- Churn: **-$2,914**
 
 ### Focus areas
 - Monitor retention and expansion (NRR) and identify churn/downsells by cohort.

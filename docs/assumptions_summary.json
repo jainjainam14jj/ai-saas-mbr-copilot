@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-28T17:57:21.039895Z",
+  "generated_at": "2026-03-01T04:25:19.246817Z",
   "horizon": {
     "start_month": "2026-01",
     "end_month": "2028-12"
@@ -25,12 +25,14 @@
     }
   },
   "base_inputs": {
-    "new_customers_per_month": null,
-    "logo_churn_rate_monthly_0_3": null,
-    "logo_churn_rate_monthly_4_plus": null,
-    "seat_expansion_rate_monthly_0_3": null,
-    "seat_expansion_rate_monthly_4_plus": null,
-    "usage_expansion_multiplier": null,
-    "notes": "Scenario deltas are applied by scaling month-over-month KPI deltas (growth vs contraction)."
+    "seat_price_dev_monthly": 20.0,
+    "edge_requests_included_millions_per_account": 10.0,
+    "edge_requests_overage_per_million_usd": 2.0,
+    "fast_data_transfer_included_gb_per_account": 1024.0,
+    "fast_data_transfer_overage_per_gb_usd": 0.15,
+    "build_minutes_included_per_account": 0.0,
+    "build_minutes_overage_per_min_usd": 0.014,
+    "cogs_other_percent_of_revenue": 0.05,
+    "notes": "Illustrative model: included+overage pricing mechanics based on public pricing; volumes/costs are assumed."
   }
 }

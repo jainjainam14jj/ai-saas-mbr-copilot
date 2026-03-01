@@ -47,13 +47,15 @@ def main() -> None:
         "horizon": {"start_month": cfg.get("start_month"), "end_month": cfg.get("end_month")},
         "scenarios": cfg.get("scenarios", {}),
         "base_inputs": {
-            "new_customers_per_month": cfg.get("new_customers_per_month"),
-            "logo_churn_rate_monthly_0_3": cfg.get("logo_churn_rate_monthly_0_3"),
-            "logo_churn_rate_monthly_4_plus": cfg.get("logo_churn_rate_monthly_4_plus"),
-            "seat_expansion_rate_monthly_0_3": cfg.get("seat_expansion_rate_monthly_0_3"),
-            "seat_expansion_rate_monthly_4_plus": cfg.get("seat_expansion_rate_monthly_4_plus"),
-            "usage_expansion_multiplier": cfg.get("usage_expansion_multiplier"),
-            "notes": "Scenario deltas are applied by scaling month-over-month KPI deltas (growth vs contraction).",
+            "seat_price_dev_monthly": cfg.get("seat_price_dev_monthly"),
+            "edge_requests_included_millions_per_account": cfg.get("edge_requests_included_millions_per_account"),
+            "edge_requests_overage_per_million_usd": cfg.get("edge_requests_overage_per_million_usd"),
+            "fast_data_transfer_included_gb_per_account": cfg.get("fast_data_transfer_included_gb_per_account"),
+            "fast_data_transfer_overage_per_gb_usd": cfg.get("fast_data_transfer_overage_per_gb_usd"),
+            "build_minutes_included_per_account": cfg.get("build_minutes_included_per_account"),
+            "build_minutes_overage_per_min_usd": cfg.get("build_minutes_overage_per_min_usd"),
+            "cogs_other_percent_of_revenue": cfg.get("cogs_other_percent_of_revenue"),
+            "notes": "Illustrative model: included+overage pricing mechanics based on public pricing; volumes/costs are assumed.",
         },
     }
     (docs / "assumptions_summary.json").write_text(json.dumps(assumptions_summary, indent=2), encoding="utf-8")

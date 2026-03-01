@@ -45,10 +45,11 @@ def main() -> None:
             dev_seats = max(1, int(rng.normal(3.0, 1.2)))
             seat_mrr = dev_seats * seat_px
 
-            # usage units (Vercel-ish)
-            edge_m = max(0.1, rng.lognormal(mean=2.2, sigma=0.6))  # millions
-            data_gb = max(5.0, rng.lognormal(mean=5.7, sigma=0.5))  # GB
-            build_min = max(20.0, rng.lognormal(mean=4.8, sigma=0.6))  # minutes
+            # usage units (Vercel-ish) — tuned so a meaningful share exceed included thresholds
+            # (e.g., >10M edge req and >1TB transfer for some accounts)
+            edge_m = max(0.1, rng.lognormal(mean=2.6, sigma=0.6))  # millions
+            data_gb = max(5.0, rng.lognormal(mean=7.2, sigma=0.55))  # GB
+            build_min = max(20.0, rng.lognormal(mean=5.6, sigma=0.6))  # minutes
 
             subs_rows.append(
                 {
@@ -80,7 +81,7 @@ def main() -> None:
             "cost_per_gb": np.linspace(0.020, 0.014, len(months)),
             "cost_per_1m_edge": np.linspace(0.35, 0.25, len(months)),
             "cost_per_build_min": np.linspace(0.004, 0.003, len(months)),
-            "infra_fixed_cost": np.linspace(180_000, 260_000, len(months)),
+            "infra_fixed_cost": np.linspace(45_000, 85_000, len(months)),
         }
     )
     cogs.to_csv(raw / "cogs_ai_monthly.csv", index=False)

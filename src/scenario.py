@@ -32,12 +32,15 @@ def apply_scenario_to_kpis(base: pd.DataFrame, sc: dict, cfg: dict) -> pd.DataFr
     # Which columns to adjust (keep month, scenario separately)
     adjust_cols = [
         "customers",
-        "seats",
+        "dev_seats",
         "seat_mrr",
         "usage_mrr",
-        "tokens_in",
-        "tokens_out",
-        "api_calls",
+        "edge_requests_millions",
+        "fast_data_transfer_gb",
+        "build_minutes",
+        "edge_revenue",
+        "data_revenue",
+        "build_revenue",
     ]
 
     for col in adjust_cols:
@@ -51,7 +54,15 @@ def apply_scenario_to_kpis(base: pd.DataFrame, sc: dict, cfg: dict) -> pd.DataFr
         for t in range(1, len(base_vals)):
             delta = base_vals[t] - base_vals[t - 1]
 
-            if col in {"usage_mrr", "tokens_in", "tokens_out", "api_calls"}:
+            if col in {
+                "usage_mrr",
+                "edge_requests_millions",
+                "fast_data_transfer_gb",
+                "build_minutes",
+                "edge_revenue",
+                "data_revenue",
+                "build_revenue",
+            }:
                 pos_mult = usage_growth_mult
             else:
                 pos_mult = growth_mult
